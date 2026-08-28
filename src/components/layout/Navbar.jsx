@@ -1,19 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { FaBars, FaTimes } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const navLinks = [
     { to: '/', label: 'Home' },
@@ -28,23 +19,17 @@ const Navbar = () => {
   ];
 
   return (
-    <nav 
-      className={`fixed w-full z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-navy/95 backdrop-blur-md shadow-lg' : 'bg-transparent'
-      }`}
-    >
+    <nav className="fixed w-full z-50 bg-navy shadow-lg">
       <div className="container-custom">
-        <div className="flex justify-between items-center h-20">
+        <div className="flex justify-between items-center h-16 md:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <img 
               src="/logo.png" 
               alt="Little Angels CBO" 
-              className="h-12 w-auto"
+              className="h-8 md:h-10 lg:h-12 w-auto"
             />
-            <span className={`font-heading text-xl font-bold ${
-              isScrolled ? 'text-white' : 'text-white'
-            }`}>
+            <span className="font-heading text-sm md:text-base lg:text-xl font-bold text-white">
               Little Angels CBO
             </span>
           </Link>
@@ -67,7 +52,7 @@ const Navbar = () => {
               </NavLink>
             ))}
             <Link to="/donate">
-              <button className="btn-primary ml-4">
+              <button className="btn-primary ml-4 text-sm">
                 DONATE NOW
               </button>
             </Link>
@@ -90,9 +75,9 @@ const Navbar = () => {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
-              className="lg:hidden bg-navy/95 backdrop-blur-md rounded-b-2xl overflow-hidden"
+              className="lg:hidden bg-navy rounded-b-2xl overflow-hidden"
             >
-              <div className="flex flex-col py-4 px-4 space-y-2">
+              <div className="flex flex-col py-4 px-4 space-y-2 max-h-[80vh] overflow-y-auto">
                 {navLinks.map((link) => (
                   <NavLink
                     key={link.to}

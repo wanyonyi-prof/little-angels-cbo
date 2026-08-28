@@ -57,47 +57,36 @@ const ProgrammesSection = () => {
   ];
 
   return (
-    <section className="py-20 bg-white">
+    <section className="py-12 sm:py-16 md:py-20 bg-white">
       <div className="container-custom">
-        <div className="text-center mb-12">
-          <motion.h2 
-            className="section-title"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
+        <div className="text-center mb-8 md:mb-12">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-navy mb-3 md:mb-4">
             What We Do
-          </motion.h2>
-          <motion.p 
-            className="section-subtitle mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-          >
+          </h2>
+          <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto px-4">
             Through our comprehensive programmes, we address the diverse needs of vulnerable communities.
-          </motion.p>
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {programmes.map((programme, index) => {
             const Icon = programme.icon;
             return (
               <motion.div
                 key={programme.id}
-                className="card p-6"
+                className="card p-4 sm:p-6"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
               >
-                <div className={`text-3xl ${programme.color} mb-4`}>
+                <div className={`text-2xl sm:text-3xl ${programme.color} mb-3 sm:mb-4`}>
                   <Icon />
                 </div>
-                <h3 className="text-xl font-heading font-bold text-navy mb-2">
+                <h3 className="text-base sm:text-lg md:text-xl font-heading font-bold text-navy mb-2">
                   {programme.title}
                 </h3>
-                <p className="text-gray-600 text-sm mb-4">{programme.description}</p>
+                <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">{programme.description}</p>
                 <Link 
                   to={`/programmes/${programme.id}`}
                   className="text-teal font-semibold hover:text-orange transition-colors inline-flex items-center gap-1 text-sm"
