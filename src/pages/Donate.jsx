@@ -211,7 +211,7 @@ const Donate = () => {
                       onChange={handleChange}
                       required
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal focus:border-transparent transition-all duration-300"
-                      placeholder="your@email.com"
+                      placeholder="your email address"
                     />
                   </div>
                 </div>

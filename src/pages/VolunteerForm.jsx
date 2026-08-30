@@ -128,7 +128,7 @@ const VolunteerForm = () => {
                   onChange={handleChange}
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal focus:border-transparent transition-all duration-300"
-                  placeholder="your@email.com"
+                  placeholder="your email address"
                 />
               </div>
             </div>
@@ -144,7 +144,7 @@ const VolunteerForm = () => {
                   value={formData.phone}
                   onChange={handleChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal focus:border-transparent transition-all duration-300"
-                  placeholder="0712 345 678"
+                  placeholder="Enter your phone number"
                 />
               </div>
               <div>

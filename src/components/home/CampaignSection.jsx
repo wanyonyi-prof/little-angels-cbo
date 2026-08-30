@@ -24,13 +24,13 @@ const CampaignSection = () => {
             
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 sm:p-6 mb-4 sm:mb-6">
               <div className="flex justify-between text-white mb-2 text-sm sm:text-base">
-                <span>Goal: KES 500,000</span>
-                <span>Raised: KES 312,500</span>
+                <span>Goal: KES 5,000,000</span>
+                <span>Raised: KES 2,500,580</span>
               </div>
               <div className="w-full bg-white/20 rounded-full h-2 sm:h-3 mb-2">
-                <div className="bg-orange h-2 sm:h-3 rounded-full" style={{ width: '62.5%' }}></div>
+                <div className="bg-orange h-2 sm:h-3 rounded-full" style={{ width: '51.5%' }}></div>
               </div>
-              <p className="text-white/80 text-xs sm:text-sm">62.5% of goal reached</p>
+              <p className="text-white/80 text-xs sm:text-sm">51.5% of goal reached</p>
             </div>
 
             <Link to="/donate">

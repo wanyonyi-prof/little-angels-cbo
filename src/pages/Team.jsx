@@ -29,7 +29,7 @@ const Team = () => {
       category: 'Leadership',
       bio: 'Amal Said Ndoro is the visionary founder of Little Angels CBO. With over 10 years of experience in community development and humanitarian work, Amal has dedicated their life to serving vulnerable children and families across Kenya. Their passion for social justice and community empowerment drives the organization\'s mission and vision.',
       image: '/images/team/founder.jpg',
-      email: 'amal@littleangelscbo.org',
+      email: '',
       phone: '0727 202197',
       social: {
         linkedin: '#',
@@ -47,8 +47,8 @@ const Team = () => {
       category: 'Leadership',
       bio: 'Rama Sudi Kombo serves as the Secretary of Little Angels CBO, bringing extensive experience in organizational management and community outreach. She ensures the smooth operation of all administrative functions and coordinates communication between the organization and its stakeholders.',
       image: '/images/team/secretary.jpg',
-      email: 'jane@littleangelscbo.org',
-      phone: '0712 345 678',
+      email: '',
+      phone: '0759169748',
       social: {
         linkedin: '#',
         twitter: '#',
@@ -65,8 +65,8 @@ const Team = () => {
       category: 'Leadership',
       bio: 'Tatu Said Omar manages the financial operations of Little Angels CBO with integrity and transparency. With a background in accounting and financial management, Tatu ensures that all donations and funds are properly accounted for and used effectively to support the organization\'s programmes.',
       image: '/images/team/treasurer.jpg',
-      email: 'tatu@littleangelscbo.org',
-      phone: '0711 234 567',
+      email: '',
+      phone: '0758953725',
       social: {
         linkedin: '#',
         twitter: '#',
@@ -83,8 +83,8 @@ const Team = () => {
       category: 'Programmes',
       bio: 'Nassra Joseph Mcharo coordinates all programme activities at Little Angels CBO. She works directly with communities, children\'s homes, and partner organizations to ensure that our programmes are delivered effectively and meet the needs of vulnerable children and families.',
       image: '/images/team/member-1.jpg',
-      email: 'nassra@littleangelscbo.org',
-      phone: '0722 334 455',
+      email: '',
+      phone: '',
       social: {
         linkedin: '#',
         twitter: '#',
@@ -101,8 +101,8 @@ const Team = () => {
       category: 'Programmes',
       bio: 'Amina Mohamed Kolin leads the community outreach efforts of Little Angels CBO. She works tirelessly to reach the most vulnerable communities, assessing needs and coordinating relief efforts. Her deep understanding of community dynamics has been instrumental in expanding our reach.',
       image: '/images/team/member-2.jpg',
-      email: 'amina@littleangelscbo.org',
-      phone: '0723 445 566',
+      email: '',
+      phone: '',
       social: {
         linkedin: '#',
         twitter: '#',
