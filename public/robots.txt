@@ -1,0 +1,13 @@
+# Little Angels CBO — robots.txt
+# Allow search engines to crawl the public website,
+# but block access to the admin dashboard.
+
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /admin/login
+Disallow: /admin/submissions
+
+# Sitemap location
+Sitemap: https://littleangels.co.ke/sitemap.xml
