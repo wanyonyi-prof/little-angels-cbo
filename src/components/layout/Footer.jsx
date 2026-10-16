@@ -1,6 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaFacebook, FaTwitter, FaInstagram, FaYoutube, FaEnvelope, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
+import {
+  FaFacebook,
+  FaTwitter,
+  FaInstagram,
+  FaYoutube,
+  FaEnvelope,
+  FaPhone,
+  FaMapMarkerAlt,
+} from 'react-icons/fa';
 
 const Footer = () => {
   const quickLinks = [
@@ -8,6 +16,7 @@ const Footer = () => {
     { to: '/team', label: 'Our Team' },
     { to: '/our-work', label: 'Our Work' },
     { to: '/our-impact', label: 'Our Impact' },
+    { to: '/consultation', label: 'Book Consultation' },
     { to: '/stories-news', label: 'Stories & News' },
   ];
 
@@ -27,23 +36,43 @@ const Footer = () => {
           {/* About */}
           <div>
             <div className="flex items-center space-x-2 mb-4">
-              <img src="/logo.png" alt="Little Angels CBO" className="h-12 w-auto" />
-              <span className="font-heading text-xl font-bold">Little Angels CBO</span>
+              <img
+                src="/logo.png"
+                alt="Little Angels CBO"
+                className="h-12 w-auto"
+              />
+              <span className="font-heading text-xl font-bold">
+                Little Angels CBO
+              </span>
             </div>
             <p className="text-gray-300 text-sm leading-relaxed mb-4">
-              Touching Lives. Restoring Hope. Building Futures. We are committed to supporting vulnerable children, families, and communities across Kenya.
+              Touching Lives. Restoring Hope. Building Futures. We are committed
+              to supporting vulnerable children, families, and communities
+              across Kenya.
             </p>
             <div className="flex space-x-3">
-              <a href="#" className="text-gray-300 hover:text-orange transition-colors">
+              <a
+                href="#"
+                className="text-gray-300 hover:text-orange transition-colors"
+              >
                 <FaFacebook size={20} />
               </a>
-              <a href="#" className="text-gray-300 hover:text-orange transition-colors">
+              <a
+                href="#"
+                className="text-gray-300 hover:text-orange transition-colors"
+              >
                 <FaTwitter size={20} />
               </a>
-              <a href="#" className="text-gray-300 hover:text-orange transition-colors">
+              <a
+                href="#"
+                className="text-gray-300 hover:text-orange transition-colors"
+              >
                 <FaInstagram size={20} />
               </a>
-              <a href="#" className="text-gray-300 hover:text-orange transition-colors">
+              <a
+                href="#"
+                className="text-gray-300 hover:text-orange transition-colors"
+              >
                 <FaYoutube size={20} />
               </a>
             </div>
@@ -51,17 +80,25 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-heading text-lg font-semibold mb-4">Quick Links</h3>
+            <h3 className="font-heading text-lg font-semibold mb-4">
+              Quick Links
+            </h3>
             <ul className="space-y-2">
               {quickLinks.map((link) => (
                 <li key={link.to}>
-                  <Link to={link.to} className="text-gray-300 hover:text-orange transition-colors text-sm">
+                  <Link
+                    to={link.to}
+                    className="text-gray-300 hover:text-orange transition-colors text-sm"
+                  >
                     {link.label}
                   </Link>
                 </li>
               ))}
               <li>
-                <Link to="/donate" className="text-orange hover:text-orange/80 transition-colors text-sm font-semibold">
+                <Link
+                  to="/donate"
+                  className="text-orange hover:text-orange/80 transition-colors text-sm font-semibold"
+                >
                   Donate Now
                 </Link>
               </li>
@@ -70,11 +107,16 @@ const Footer = () => {
 
           {/* Programmes */}
           <div>
-            <h3 className="font-heading text-lg font-semibold mb-4">Our Programmes</h3>
+            <h3 className="font-heading text-lg font-semibold mb-4">
+              Our Programmes
+            </h3>
             <ul className="space-y-2">
               {programmes.slice(0, 5).map((programme) => (
                 <li key={programme.to}>
-                  <Link to={programme.to} className="text-gray-300 hover:text-orange transition-colors text-sm">
+                  <Link
+                    to={programme.to}
+                    className="text-gray-300 hover:text-orange transition-colors text-sm"
+                  >
                     {programme.label}
                   </Link>
                 </li>
@@ -84,23 +126,23 @@ const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h3 className="font-heading text-lg font-semibold mb-4">Contact Us</h3>
+            <h3 className="font-heading text-lg font-semibold mb-4">
+              Contact Us
+            </h3>
             <ul className="space-y-3">
               <li className="flex items-start space-x-3">
                 <FaPhone className="text-orange mt-1" />
                 <span className="text-sm text-gray-300">0727 202197</span>
               </li>
               <li className="flex items-start space-x-3">
-                <FaPhone className="text-orange mt-1" />
-                <span className="text-sm text-gray-300">0759169748</span>
-              </li>
-              <li className="flex items-start space-x-3">
                 <FaEnvelope className="text-orange mt-1" />
-                <span className="text-sm text-gray-300">litt89765@gmail.com</span>
+                <span className="text-sm text-gray-300">
+                  litt89765@gmail.com
+                </span>
               </li>
               <li className="flex items-start space-x-3">
                 <FaMapMarkerAlt className="text-orange mt-1" />
-                <span className="text-sm text-gray-300">Mombasa, Kenya</span>
+                <span className="text-sm text-gray-300">Nairobi, Kenya</span>
               </li>
             </ul>
             <Link to="/donate">

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
+import { submitForm } from '../services/supabase';
 import { sendVolunteerNotification } from '../services/emailService';
+import { isSpam, checkRateLimit, createHoneypot } from '../utils/spamProtection';
 
 const VolunteerForm = () => {
   const [formData, setFormData] = useState({
@@ -13,22 +15,52 @@ const VolunteerForm = () => {
     interest: '',
     availability: '',
     motivation: '',
+    ...createHoneypot(),
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
     setSubmitStatus(null);
 
-    const result = await sendVolunteerNotification(formData);
-    
+    if (isSpam(formData)) {
+      setSubmitStatus({ type: 'error', message: 'Submission blocked.' });
+      return;
+    }
+
+    const rateCheck = checkRateLimit(3);
+    if (!rateCheck.allowed) {
+      setSubmitStatus({ type: 'error', message: rateCheck.message });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    const result = await submitForm({
+      type: 'volunteer',
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      country: formData.location,
+      category: formData.interest,
+      message: formData.motivation,
+      metadata: {
+        skills: formData.skills,
+        availability: formData.availability,
+      },
+    });
+
     if (result.success) {
-      setSubmitStatus({ 
-        type: 'success', 
-        message: 'Thank you for your interest in volunteering! We will contact you soon.' 
+      setSubmitStatus({
+        type: 'success',
+        message: 'Thank you for your interest in volunteering! We will contact you soon.',
       });
+
+      sendVolunteerNotification(formData).catch((err) =>
+        console.warn('Email notification failed:', err)
+      );
+
       setFormData({
         name: '',
         email: '',
@@ -38,14 +70,15 @@ const VolunteerForm = () => {
         interest: '',
         availability: '',
         motivation: '',
+        ...createHoneypot(),
       });
     } else {
-      setSubmitStatus({ 
-        type: 'error', 
-        message: 'Something went wrong. Please try again or contact us directly.' 
+      setSubmitStatus({
+        type: 'error',
+        message: result.message || 'Something went wrong. Please try again.',
       });
     }
-    
+
     setIsSubmitting(false);
   };
 
@@ -68,7 +101,7 @@ const VolunteerForm = () => {
   return (
     <div className="py-20">
       <div className="container-custom max-w-4xl">
-        <motion.div 
+        <motion.div
           className="text-center mb-12"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -79,17 +112,16 @@ const VolunteerForm = () => {
           </p>
         </motion.div>
 
-        <motion.div 
+        <motion.div
           className="bg-white rounded-2xl shadow-lg p-6 md:p-8"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          {/* Status Message */}
           {submitStatus && (
             <div className={`mb-6 p-4 rounded-xl flex items-start space-x-3 ${
-              submitStatus.type === 'success' 
-                ? 'bg-green-50 border border-green-200 text-green-700' 
+              submitStatus.type === 'success'
+                ? 'bg-green-50 border border-green-200 text-green-700'
                 : 'bg-red-50 border border-red-200 text-red-700'
             }`}>
               {submitStatus.type === 'success' ? (
@@ -102,6 +134,16 @@ const VolunteerForm = () => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
+            <input
+              type="hidden"
+              name="honeypot"
+              value={formData.honeypot}
+              onChange={handleChange}
+              tabIndex="-1"
+              autoComplete="off"
+              style={{ display: 'none' }}
+            />
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -128,7 +170,7 @@ const VolunteerForm = () => {
                   onChange={handleChange}
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal focus:border-transparent transition-all duration-300"
-                  placeholder="your email address"
+                  placeholder="your@email.com"
                 />
               </div>
             </div>
@@ -229,9 +271,7 @@ const VolunteerForm = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`btn-primary w-full text-lg py-4 ${
-                isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
-              }`}
+              className={`btn-primary w-full text-lg py-4 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
               {isSubmitting ? 'Submitting...' : 'Submit Application'}
             </button>

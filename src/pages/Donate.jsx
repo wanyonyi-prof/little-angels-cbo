@@ -1,8 +1,19 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaHandsHelping, FaUtensils, FaBook, FaHeartbeat, FaHome, FaDonate, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
+import {
+  FaHandsHelping,
+  FaUtensils,
+  FaBook,
+  FaHeartbeat,
+  FaHome,
+  FaDonate,
+  FaCheckCircle,
+  FaExclamationCircle,
+} from 'react-icons/fa';
+import { submitForm } from '../services/supabase';
 import { sendDonationNotification } from '../services/emailService';
+import { isSpam, checkRateLimit, createHoneypot } from '../utils/spamProtection';
 
 const Donate = () => {
   const [formData, setFormData] = useState({
@@ -15,6 +26,7 @@ const Donate = () => {
     category: 'General Donation',
     message: '',
     anonymous: false,
+    ...createHoneypot(),
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
@@ -37,17 +49,50 @@ const Donate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
     setSubmitStatus(null);
 
-    const result = await sendDonationNotification(formData);
-    
+    // Spam check
+    if (isSpam(formData)) {
+      setSubmitStatus({ type: 'error', message: 'Submission blocked.' });
+      return;
+    }
+
+    // Rate limit
+    const rateCheck = checkRateLimit(3);
+    if (!rateCheck.allowed) {
+      setSubmitStatus({ type: 'error', message: rateCheck.message });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    // 1. Save to Supabase
+    const result = await submitForm({
+      type: 'donation',
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      country: formData.country,
+      currency: formData.currency,
+      amount: formData.amount,
+      category: formData.category,
+      message: formData.message,
+      metadata: { anonymous: formData.anonymous },
+    });
+
     if (result.success) {
-      setSubmitStatus({ 
-        type: 'success', 
-        message: 'Thank you for your generous donation! Our team will contact you shortly with payment details.' 
+      setSubmitStatus({
+        type: 'success',
+        message:
+          'Thank you for your generous donation! Our team will contact you shortly with payment details.',
       });
-      // Reset form
+
+      // 2. Email notification (non-blocking)
+      sendDonationNotification(formData).catch((err) =>
+        console.warn('Email notification failed:', err)
+      );
+
+      // 3. Reset form
       setFormData({
         name: '',
         email: '',
@@ -58,14 +103,15 @@ const Donate = () => {
         category: 'General Donation',
         message: '',
         anonymous: false,
+        ...createHoneypot(),
       });
     } else {
-      setSubmitStatus({ 
-        type: 'error', 
-        message: 'Something went wrong. Please try again or contact us directly.' 
+      setSubmitStatus({
+        type: 'error',
+        message: result.message || 'Something went wrong. Please try again.',
       });
     }
-    
+
     setIsSubmitting(false);
   };
 
@@ -81,7 +127,7 @@ const Donate = () => {
     <div className="py-20">
       <div className="container-custom">
         {/* Header */}
-        <motion.div 
+        <motion.div
           className="text-center mb-12"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -94,21 +140,22 @@ const Donate = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Donation Form */}
-          <motion.div 
+          <motion.div
             className="lg:col-span-2"
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
           >
             <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
               <h2 className="text-2xl font-heading font-bold text-navy mb-6">Make a Donation</h2>
-              
-              {/* Status Message */}
+
               {submitStatus && (
-                <div className={`mb-6 p-4 rounded-xl flex items-start space-x-3 ${
-                  submitStatus.type === 'success' 
-                    ? 'bg-green-50 border border-green-200 text-green-700' 
-                    : 'bg-red-50 border border-red-200 text-red-700'
-                }`}>
+                <div
+                  className={`mb-6 p-4 rounded-xl flex items-start space-x-3 ${
+                    submitStatus.type === 'success'
+                      ? 'bg-green-50 border border-green-200 text-green-700'
+                      : 'bg-red-50 border border-red-200 text-red-700'
+                  }`}
+                >
                   {submitStatus.type === 'success' ? (
                     <FaCheckCircle className="text-green-500 mt-1 flex-shrink-0" />
                   ) : (
@@ -119,6 +166,17 @@ const Donate = () => {
               )}
 
               <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Honeypot — hidden from humans */}
+                <input
+                  type="text"
+                  name="honeypot"
+                  value={formData.honeypot}
+                  onChange={handleChange}
+                  tabIndex="-1"
+                  autoComplete="off"
+                  style={{ display: 'none' }}
+                />
+
                 {/* Donation Categories */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-3">
@@ -132,7 +190,9 @@ const Donate = () => {
                         <button
                           key={category.value}
                           type="button"
-                          onClick={() => setFormData({ ...formData, category: category.value })}
+                          onClick={() =>
+                            setFormData({ ...formData, category: category.value })
+                          }
                           className={`p-3 rounded-xl border-2 transition-all duration-300 text-center ${
                             isSelected
                               ? 'border-teal bg-teal/10 text-teal'
@@ -140,14 +200,16 @@ const Donate = () => {
                           }`}
                         >
                           <Icon className="mx-auto text-xl mb-1" />
-                          <span className="text-xs font-medium block">{category.label}</span>
+                          <span className="text-xs font-medium block">
+                            {category.label}
+                          </span>
                         </button>
                       );
                     })}
                   </div>
                 </div>
 
-                {/* Donation Amount - UPDATED */}
+                {/* Donation Amount */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Donation Amount *
@@ -181,7 +243,9 @@ const Donate = () => {
                       </select>
                     </div>
                   </div>
-                  <p className="text-xs text-gray-400 mt-1">Enter any amount you wish to donate</p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Enter any amount you wish to donate
+                  </p>
                 </div>
 
                 {/* Personal Information */}
@@ -211,7 +275,7 @@ const Donate = () => {
                       onChange={handleChange}
                       required
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal focus:border-transparent transition-all duration-300"
-                      placeholder="your email address"
+                      placeholder="your@email.com"
                     />
                   </div>
                 </div>
@@ -293,7 +357,7 @@ const Donate = () => {
           </motion.div>
 
           {/* Sidebar */}
-          <motion.div 
+          <motion.div
             className="lg:col-span-1"
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
@@ -305,21 +369,27 @@ const Donate = () => {
                   <FaHandsHelping className="text-orange mt-1 flex-shrink-0" />
                   <div>
                     <p className="font-semibold">Direct Impact</p>
-                    <p className="text-sm text-gray-200">Your donation goes directly to supporting vulnerable children and families.</p>
+                    <p className="text-sm text-gray-200">
+                      Your donation goes directly to supporting vulnerable children and families.
+                    </p>
                   </div>
                 </li>
                 <li className="flex items-start space-x-3">
                   <FaHeartbeat className="text-orange mt-1 flex-shrink-0" />
                   <div>
                     <p className="font-semibold">Transparency</p>
-                    <p className="text-sm text-gray-200">We provide regular updates on how your donations are used.</p>
+                    <p className="text-sm text-gray-200">
+                      We provide regular updates on how your donations are used.
+                    </p>
                   </div>
                 </li>
                 <li className="flex items-start space-x-3">
                   <FaDonate className="text-orange mt-1 flex-shrink-0" />
                   <div>
                     <p className="font-semibold">Tax Deductible</p>
-                    <p className="text-sm text-gray-200">Your donation is tax deductible in Kenya.</p>
+                    <p className="text-sm text-gray-200">
+                      Your donation is tax deductible in Kenya.
+                    </p>
                   </div>
                 </li>
               </ul>
